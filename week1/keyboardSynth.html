@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" context="text/html"; charset=utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+<body>
+	<h1>Keyboard Synth</h1>
+	<div
+		style = "background:red; height:500px; width:500px"
+		tabindex = "1"
+		onkeydown = "setNote(event.key)"
+	>
+
+	</div>
+</body>
+
+<script>
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var con = new audio_context();
+	var osc = con.createOscillator();
+	osc.connect(con.destination);
+
+	osc.frequency.value = 400;
+	osc.start();
+
+	setTimeout(function() {
+		osc.stop();
+	}, 5000);
+
+	function setNote(key) {
+				osc.frequency.value = 261.63;
+		switch (key) {
+			case 'a':
+				osc.frequency.value = 261.63;
+				break;
+
+			case 'z':
+				osc.frequency.value = 523.25;
+				break;
+
+			case 'e':
+				osc.frequency.value = 1046.50;
+				break;
+
+			case 'r':
+				osc.frequency.value = 2093.00;
+				break;
+			default:
+				osc.frequency.value = 400;
+				break;
+		}
+	}
+</script>
+
+</html>
