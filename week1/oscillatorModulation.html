@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" context="text/html"; charset=utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+<body>
+	<h1>Modulation with an oscillator</h1>
+	<div
+		style = "background:red; height:500px; width:500px"
+		onmousemove = "lfo.frequency.value = event.clientX"
+		>
+
+	</div>
+</body>
+
+<script>
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var con = new audio_context();
+
+	var osc = con.createOscillator();
+	var lfo = con.createOscillator();
+
+	var lfo_ampl = con.createGain();
+	lfo_ampl.gain.value = 200;
+
+	osc.frequency.value = 300;
+	lfo.frequency.value = 10;
+
+	lfo.connect(lfo_ampl);
+	lfo_ampl.connect(osc.frequency);
+
+	osc.connect(con.destination);
+
+	osc.start();
+	lfo.start();
+
+	setTimeout(function() {
+		osc.stop();
+	}, 5000);
+</script>
+
+</html>
