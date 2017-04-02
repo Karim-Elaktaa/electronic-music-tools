@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" context="text/html"; charset=utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+<body>
+	<h1>Additive Synth</h1>
+	<div
+		style = "background:red; height:500px; width:500px"
+		tabindex = "0"
+		onkeydown="playSynth()"
+		>
+
+	</div>
+</body>
+
+<script>
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var con = new audio_context();
+
+	function playSynth() {
+		var osc = con.createOscillator();	
+		osc.type = 'sine';
+
+		var amp = con.createGain();
+
+		osc.frequency.value = Math.random() * 500;
+		osc.connect(amp);
+
+		var now = con.currentTime;
+
+		amp.gain.value = 0;
+		amp.gain.linearRampToValueAtTime(0.1, now + 2);
+		amp.gain.linearRampToValueAtTime(0, now + 4);
+
+		amp.connect(con.destination);
+		osc.start();
+
+		osc.stop(now + 4.1);
+	}
+</script>
+
+</html>
