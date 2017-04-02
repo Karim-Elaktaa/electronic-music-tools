@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" context="text/html"; charset=utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+
+<body>
+    <div
+    style="background:black;height:100%;color:white"
+    tabindex="1"
+    onkeydown="setNote(event.key)"
+    onmousemove="changeFrequency(event.clientX, event.clientY);">
+        
+    <h1>Welcome to the first<br>
+    programming exercise</h1>  
+    <ul>
+        <li>Login and fork this code first!</li>
+        <li>Edit the code at the top in onmousemove<br>
+        so that it also changes the frequency of the 'osc'<br>
+        oscillator. It should use the mouse Y position. </li>
+        <li>Challenge: can you combine it with the <br>
+        keyboard controlled synth example? 
+        </li>
+        <li>Done? back to the course!</li>
+        
+    </ul>
+    
+    <h1>Controls</h1>
+    <p>Move your mouse to change the frequency of the oscillator (Y) and the LFO (X).</p>
+    <p>Press z, x, c or v after clicking here to change the note.</p>
+    <p>You can also select the type of the oscillator:</p>
+    <select name="oscillatorType"
+            id="oscillatorSelector"
+            onchange="changeOscillatorType(this.value)"
+            >
+        <option value="sine" selected>Sine</option> 
+        <option value="square">Square</option>
+        <option value="sawtooth">Sawtooth</option>
+        <option value="triangle">Triangle</option>
+    </select>
+
+    </div>
+    
+    
+</body>
+<script>
+    var audio_context = window.AudioContext || window.webkitAudioContext;
+    var con = new audio_context();
+    
+    var osc = con.createOscillator();
+    var lfo = con.createOscillator();
+    
+    var lfo_amp = con.createGain();
+    lfo_amp.gain.value = 200;
+    
+    osc.type = "sine"; // default oscillator type
+    osc.frequency.value = 300;
+    lfo.frequency.value = 15;
+        
+    lfo.connect(lfo_amp);
+    lfo_amp.connect(osc.frequency);
+    osc.connect(con.destination);
+    
+    osc.start();
+    lfo.start();
+    
+    function changeFrequency(x, y) {
+        lfo.frequency.value = x;
+        osc.frequency.value = y;
+    }
+
+    function setNote(key){
+        switch (key) {
+            case "z":
+                // play a c
+                osc.frequency.value = 261.63;
+                break;
+            case "x":
+                // play a c
+                osc.frequency.value = 293.66;
+                break;
+            case "c":
+                // play a c
+                osc.frequency.value = 329.63;
+                break;
+            case "v":
+                // play a c
+                osc.frequency.value = 349.23;
+                break;
+        }
+    }
+    
+    function changeOscillatorType(type) {
+        // change the type of the oscillator
+        osc.type = type;   
+    }
+</script>
+
+</html>
