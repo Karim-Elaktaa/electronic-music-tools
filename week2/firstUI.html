@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+	<head>
+		<script src="ext/nexusUI.js"></script>
+		<meta http-equiv="content-type" context="text/html"; charset=utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+
+<body>
+	<h3> Slider </h3>
+	<canvas id="slider1" nx="slider" 
+		min="100" max="1000"
+		height="300px" width="200px"></canvas>
+</body>
+
+<script>
+	var audio_context = window.AudioContext 
+		|| window.webkitAudioContext;
+	var con = new audio_context();
+
+	var osc = con.createOscillator();
+	osc.connect(con.destination);
+	osc.start();
+
+	var slider1;
+
+	nx.onload = function() {
+		slider1.on('*', slider1Changed);
+	};
+
+	function slider1Changed(data) {
+		osc.frequency.value = data.value;
+		console.log(data);
+	}
+</script>
+
+</html>
