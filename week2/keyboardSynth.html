@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+	<head>
+		<script src="ext/nexusUI.js"></script>
+		<meta http-equiv="content-type" context="text/html"; charset=utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+
+<body>
+	<canvas id="slider1" nx="slider" 
+		min="100" max="1000"
+		height="200px" width="500px"></canvas>
+
+	<br/>
+	<canvas id="keyboard" nx="keyboard" 
+		height="100px" width="500px"></canvas>
+
+</body>
+
+<script>
+	var audio_context = window.AudioContext 
+		|| window.webkitAudioContext;
+	var con = new audio_context();
+
+	var osc = con.createOscillator();
+	osc.connect(con.destination);
+	osc.start();
+
+	var slider1;
+	var keyboard;
+
+	nx.onload = function() {
+		slider1.on('*', slider1Changed);
+		keyboard.on('*', keyboardChanged);
+	};
+
+	function slider1Changed(data) {
+		osc.frequency.value = data.value;
+	}
+
+	var midi_to_freq = {
+		60:261.63, 
+		61:277.18, 
+		62:293.66, 
+		63:311.13, 
+		64:329.63, 
+		65:349.23, 
+		66:369.99, 
+		67:392.00,	
+		68:415.30
+	};
+
+	function keyboardChanged(data) {
+		console.log(data);
+		osc.frequency.value = midi_to_freq[data.note];
+		slider1.value = midi_to_freq[data.note];
+	}
+</script>
+
+</html>
