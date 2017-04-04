@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+	<head>
+		<script src="ext/nexusUI.js"></script>
+		<meta http-equiv="content-type" context="text/html"; charset=utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+
+<body>
+	<h3>On/Off</h3>
+	<canvas id="toggleStart" nx="toggle"
+		height="70px" width="70px"></canvas>
+
+	<h3>Select the oscillator type</h3>
+	<canvas id="selectOscType" nx="select"
+			choices="sine,square,sawtooth,triangle" ></canvas>
+
+	<br/>
+	<canvas id="slider" nx="slider"
+			min="100" max="1000"></canvas>
+
+	<canvas id="keyboard" nx="keyboard"
+			height="100px" width="500px"></canvas>
+</body>
+
+<script>
+/////////////////////////////////////
+/////////////////////////////////////
+// User Interface
+/////////////////////////////////////
+/////////////////////////////////////
+
+	var slider;
+	var keyboard;
+	var toggleStart;
+	var selectOscType;
+
+	nx.onload = function() {
+		slider.on('*', updateSliderUI);
+		keyboard.on('*', updateKeyboardUI);
+		toggleStart.on('*', updateStartUI);
+		selectOscType.on('*', updateOscTypeUI);
+	};
+
+	function updateStartUI(data) {
+		if (data.value == true) {
+			startOscillators();
+		} else {
+			stopOscillators();
+		}
+	}
+
+	function updateOscTypeUI(data) {
+		// update osc type
+		updateTypeOfOsc(data.text);
+	}
+
+	function updateSliderUI(data) {
+		// update osc frequency
+		updateOscFreq(data.value);
+	}
+
+	var midi_to_freq = {
+		60:261.63,
+		61:277.18,
+		62:293.66,
+		63:311.13,
+		64:329.63,
+		65:349.23,
+		66:369.99,
+		67:392.00,
+		68:415.30
+	};
+
+	function updateKeyboardUI(data) {
+		// update slider
+		slider.set({value:midi_to_freq[data.note]}, true);
+		// update osc frequency
+		updateOscFreq(midi_to_freq[data.note]);
+	}
+</script>
+
+<script>
+/////////////////////////////////////
+/////////////////////////////////////
+// Audio Management
+/////////////////////////////////////
+/////////////////////////////////////
+
+	var audio_context = window.AudioContext
+			|| window.webkitAudioContext;
+	var con = new audio_context();
+	var osc;
+	var amp;
+	var typeOfOsc = 'sine';
+
+	function updateOscFreq(freq) {
+		osc.frequency.value = freq;
+	}
+
+	function updateTypeOfOsc(value) {
+		typeOfOsc = value;
+		osc.type = typeOfOsc;
+	}
+
+	function startOscillators() {
+		// create gain
+		amp = con.createGain();
+		amp.gain.value = 0;
+
+		// create oscillator
+		osc = con.createOscillator();
+		osc.type = typeOfOsc;
+		osc.frequency.value = Math.random() * 500;
+
+		var now = con.currentTime;
+
+		amp.gain.linearRampToValueAtTime(0.5, now + 9);
+		amp.gain.linearRampToValueAtTime(0.2, now + 14);
+
+		osc.connect(amp);
+		amp.connect(con.destination);
+
+		osc.start();
+	}
+
+	function stopOscillators() {
+		osc.stop();
+	}
+
+	function changeGainValue() {
+		amp.gain.value = 0;
+	}
+
+	function changeGainTempo() {
+		amp.gain.linearRampToValueAtTime(0.1, now + 2);
+		amp.gain.linearRampToValueAtTime(0, now + 4);
+	}
+
+	function playSynth() {
+		var osc = con.createOscillator();
+		osc.type = 'sine';
+
+		var amp = con.createGain();
+
+		osc.frequency.value = Math.random() * 500;
+		osc.connect(amp);
+
+		var now = con.currentTime;
+
+		amp.gain.value = 0;
+		amp.gain.linearRampToValueAtTime(0.1, now + 2);
+		amp.gain.linearRampToValueAtTime(0, now + 4);
+
+		amp.connect(con.destination);
+		osc.start();
+
+		osc.stop(now + 4.1);
+	}
+</script>
+
+</html>
