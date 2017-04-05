@@ -152,7 +152,8 @@
 	var osc;
 	var osc2;
 	var amp;
-	var typeOfOsc = 'sine';
+	var typeOfOsc1 = 'sine';
+	var typeOfOsc2 = 'sine';
 
 	function updateOscFreq(freq) {
 		try {
@@ -163,9 +164,9 @@
 	}
 
 	function updateTypeOfOsc(value) {
-		typeOfOsc = value;
+		typeOfOsc1 = value;
 		try {
-			osc.type = typeOfOsc;
+			osc.type = typeOfOsc1;
 		} catch (e) {
 			logError(e);
 		}
@@ -180,7 +181,7 @@
 		
 				// create oscillator
 				osc = con.createOscillator();
-				osc.type = typeOfOsc;
+				osc.type = typeOfOsc1;
 				osc.frequency.value = Math.random() * 500;
 		
 				var now = con.currentTime;
@@ -196,7 +197,7 @@
 			case 2:
 				// create oscillator
 				osc2 = con.createOscillator();
-				osc2.type = typeOfOsc;
+				osc2.type = typeOfOsc2;
 				osc2.frequency.value = Math.random() * 500;
 		
 				var now = con.currentTime;
