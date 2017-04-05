@@ -87,12 +87,20 @@
 	var typeOfOsc = 'sine';
 
 	function updateOscFreq(freq) {
-		osc.frequency.value = freq;
+		try {
+			osc.frequency.value = freq;
+		} catch (e) {
+			logError(e);
+		}
 	}
 
 	function updateTypeOfOsc(value) {
 		typeOfOsc = value;
-		osc.type = typeOfOsc;
+		try {
+			osc.type = typeOfOsc;
+		} catch (e) {
+			logError(e);
+		}
 	}
 
 	function startOscillators() {
@@ -117,16 +125,28 @@
 	}
 
 	function stopOscillators() {
-		osc.stop();
+		try {
+			osc.stop();
+		} catch (e) {
+			logError(e);
+		}
 	}
 
 	function changeGainValue() {
-		amp.gain.value = 0;
+		try {
+			amp.gain.value = 0;
+		} catch (e) {
+			logError(e);
+		}
 	}
 
 	function changeGainTempo() {
-		amp.gain.linearRampToValueAtTime(0.1, now + 2);
-		amp.gain.linearRampToValueAtTime(0, now + 4);
+		try {
+			amp.gain.linearRampToValueAtTime(0, now + 4);
+			amp.gain.value = 0;
+		} catch (e) {
+			logError(e);
+		}
 	}
 
 	function playSynth() {
@@ -157,6 +177,8 @@
 // Utils
 /////////////////////////////////////
 /////////////////////////////////////
+
+	var DEBUG = false;
 
 	var midi_to_freq = {
 		48:130.8127826503,
@@ -196,6 +218,12 @@
 		82:932.3275230362,
 		83:987.7666025122
 	};
+
+	function logError(e) {
+		if (DEBUG) {
+			console.log(e);
+		}
+	}
 </script>
 
 </html>
