@@ -10,20 +10,69 @@
 
 
 <body>
-	<h3>On/Off</h3>
-	<canvas id="toggleStart" nx="toggle"
-		height="70px" width="70px"></canvas>
+	<div id="main">
 
-	<h3>Select the oscillator type</h3>
-	<canvas id="selectOscType" nx="select"
-			choices="sine,square,sawtooth,triangle" ></canvas>
+		<div style="width:840px; height:320px; display:block;">
+			<div> ... </div>
+		</div>
 
-	<br/>
-	<canvas id="slider" nx="slider"
-			min="100" max="1000"></canvas>
+		<div id="osc1" class="oscFrame">
+			<div class="pair">
+				<canvas id="toggleStartOsc1" nx="toggle" class="lower-control"
+						height="65px" width="65px">
+				</canvas>
+				<div>On</div>
+			</div>
+		
+			<div class="pair">
+				<canvas id="selectTypeOsc1" nx="select" width="300px"
+						choices="sine,square,sawtooth,triangle" ></canvas>
+				<div>Oscillator type</div>
+			</div>
+		
+			<div id="firstOscManager">
+				<canvas id="sliderOsc1" nx="slider"
+						min="100" max="1000"></canvas>
+			
+				<canvas id="keyboardOsc1" nx="keyboard"
+						height="100px" width="500px"></canvas>
+			</div>
+		</div>
 
-	<canvas id="keyboard" nx="keyboard"
-			height="100px" width="500px"></canvas>
+		<div id="osc2" class="oscFrame">
+			<div class="pair">
+				<canvas id="toggleStartOsc2" nx="toggle" class="lower-control"
+						height="65px" width="65px">
+				</canvas>
+				<div>On</div>
+			</div>
+		
+			<div class="pair">
+				<canvas id="gainOsc2" nx="dial" class="lower-control"
+						></canvas>
+				<div>Gain</div>
+			</div>
+	
+			<div class="pair">
+				<canvas id="delayOsc2" nx="dial" class="lower-control"
+						></canvas>
+				<div>Delay</div>
+			</div>
+
+			<div class="pair">
+				<canvas id="Osc2" nx="dial" class="lower-control"
+						></canvas>
+				<div>Delay</div>
+			</div>
+
+			<div>
+				<canvas id="sliderOsc2" nx="slider"
+						min="100" max="1000"></canvas>
+				<canvas nx="position"></canvas>
+			</div>
+		</div>
+
+	</div>
 </body>
 
 <script>
@@ -33,23 +82,41 @@
 /////////////////////////////////////
 /////////////////////////////////////
 
-	var slider;
-	var keyboard;
-	var toggleStart;
-	var selectOscType;
+	var sliderOsc1;
+	var keyboardOsc1;
+	var toggleStartOsc1;
+	var selectTypeOsc1;
+
+	var toggleStartOsc2;
+	var sliderOsc2;
 
 	nx.onload = function() {
-		slider.on('*', updateSliderUI);
-		keyboard.on('*', updateKeyboardUI);
-		toggleStart.on('*', updateStartUI);
-		selectOscType.on('*', updateOscTypeUI);
+		nx.colorize("accent", "#347");
+        nx.colorize("border", "#bbb");
+        nx.colorize("fill", "#eee");
+
+		toggleStartOsc1.on('*', updateStartUIOsc1);
+		sliderOsc1.on('*', updateSliderUI);
+		keyboardOsc1.on('*', updateKeyboardUI);
+		selectTypeOsc1.on('*', updateOscTypeUI);
+
+
+		toggleStartOsc2.on('*', updateStartUIOsc2);
 	};
 
-	function updateStartUI(data) {
+	function updateStartUIOsc1(data) {
 		if (data.value == true) {
-			startOscillators();
+			startOscillators(1);
 		} else {
-			stopOscillators();
+			stopOscillators(1);
+		}
+	}
+
+	function updateStartUIOsc2(data) {
+		if (data.value == true) {
+			startOscillators(2);
+		} else {
+			stopOscillators(2);
 		}
 	}
 
@@ -65,8 +132,8 @@
 
 
 	function updateKeyboardUI(data) {
-		// update slider
-		slider.set({value:midi_to_freq[data.note]}, true);
+		// update sliderOsc1
+		sliderOsc1.set({value:midi_to_freq[data.note]}, true);
 		// update osc frequency
 		updateOscFreq(midi_to_freq[data.note]);
 	}
@@ -83,6 +150,7 @@
 			|| window.webkitAudioContext;
 	var con = new audio_context();
 	var osc;
+	var osc2;
 	var amp;
 	var typeOfOsc = 'sine';
 
@@ -103,32 +171,61 @@
 		}
 	}
 
-	function startOscillators() {
-		// create gain
-		amp = con.createGain();
-		amp.gain.value = 0;
+	function startOscillators(oscTarget) {
+		switch (oscTarget) {
+			case 1:
+				// create gain
+				amp = con.createGain();
+				amp.gain.value = 0;
+		
+				// create oscillator
+				osc = con.createOscillator();
+				osc.type = typeOfOsc;
+				osc.frequency.value = Math.random() * 500;
+		
+				var now = con.currentTime;
+		
+				amp.gain.linearRampToValueAtTime(0.5, now + 9);
+				amp.gain.linearRampToValueAtTime(0.2, now + 14);
+		
+				osc.connect(amp);
+				amp.connect(con.destination);
+		
+				osc.start();
+				break;
+			case 2:
+				// create oscillator
+				osc2 = con.createOscillator();
+				osc2.type = typeOfOsc;
+				osc2.frequency.value = Math.random() * 500;
+		
+				var now = con.currentTime;
+		
+				osc2.connect(con.destination);
+		
+				osc2.start();
+				break;
 
-		// create oscillator
-		osc = con.createOscillator();
-		osc.type = typeOfOsc;
-		osc.frequency.value = Math.random() * 500;
-
-		var now = con.currentTime;
-
-		amp.gain.linearRampToValueAtTime(0.5, now + 9);
-		amp.gain.linearRampToValueAtTime(0.2, now + 14);
-
-		osc.connect(amp);
-		amp.connect(con.destination);
-
-		osc.start();
+		}
 	}
 
-	function stopOscillators() {
-		try {
-			osc.stop();
-		} catch (e) {
-			logError(e);
+	function stopOscillators(oscTarget) {
+		switch (oscTarget) {
+			case 1:
+				try {
+					osc.stop();
+				} catch (e) {
+					logError(e);
+				}
+				break;
+		case 2:
+				try {
+					osc2.stop();
+				} catch (e) {
+					logError(e);
+				}
+				break;
+
 		}
 	}
 
@@ -225,5 +322,39 @@
 		}
 	}
 </script>
+
+<style>
+	body {
+		margin:0;
+		padding:0;
+	}
+	#main {
+		width: 800px;
+		margin:30px auto;
+	}
+	.lower-control {
+		height:65px;
+		width:65px;
+		display:block;
+	}
+	.pair {
+		display:inline-block;
+		margin:10px 5px;
+	}
+	.pair div {
+		text-align:center;
+		font-family:helvetica;
+		font-size:9pt;
+		font-weight:500;
+		color:#aaa;
+		margin:10px 0px;
+	}
+	.oscFrame {
+		border: 3px #ededed solid;
+		padding:10px 10px;
+		margin:2px 5px;
+		border-radius: 25px;
+	}
+</style>
 
 </html>
