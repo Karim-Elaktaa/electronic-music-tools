@@ -14,6 +14,9 @@
 
 		<div style="width:840px; height:320px; display:block;">
 			<div> ... </div>
+			<canvas class="visuAnalyser" 
+					width="840" height="320px">
+			</canvas>
 		</div>
 
 		<div id="osc1" class="oscFrame">
@@ -154,6 +157,14 @@
 	var amp;
 	var typeOfOsc1 = 'sine';
 	var typeOfOsc2 = 'sine';
+	var oscOn = [false, false];
+
+	var analyser = con.createAnalyser();
+	analyser.fftSize = 2048;
+	
+	var visuAnalyser = document.querySelector('.visuAnalyser');
+	var visuAnalyserCtx = visuAnalyser.getContext("2d");
+	var drawVisual;
 
 	function updateOscFreq(freq) {
 		try {
@@ -170,6 +181,56 @@
 		} catch (e) {
 			logError(e);
 		}
+	}
+
+	function updateAnalyser() {
+	}
+
+	function visualize() {
+		WIDTH = visuAnalyser.width;
+		HEIGHT = visuAnalyser.height;
+
+		analyser.fftSize = 2048;
+		var bufferLength = analyser.fftSize;
+		var dataArray = new Uint8Array(bufferLength);
+		console.log(dataArray);
+
+		visuAnalyserCtx.clearRect(0, 0, WIDTH, HEIGHT);
+
+		function draw() {
+			drawVisual = requestAnimationFrame(draw);
+			analyser.getByteTimeDomainData(dataArray);
+
+			visuAnalyserCtx.fillStyle = 'rgb(200, 200, 200)';
+			visuAnalyserCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
+			visuAnalyserCtx.lineWidth = 2;
+			visuAnalyserCtx.strokeStyle = 'rgb(0, 0, 0)';
+
+			visuAnalyserCtx.beginPath();
+
+			var sliceWidth = WIDTH * 1.0 / bufferLength;
+			var x = 0;
+
+			for(var i = 0; i < bufferLength; i++) {
+				var v = dataArray[i] / 128.0;
+				var y = v * HEIGHT / 2;
+
+				if (i === 0) {
+					visuAnalyserCtx.moveTo(x, y);
+				} else {
+					visuAnalyserCtx.lineTo(x, y);
+				}
+
+				x += sliceWidth;
+			}
+
+			visuAnalyserCtx.lineTo(visuAnalyser.width, visuAnalyser.height / 2);
+			visuAnalyserCtx.stroke();
+
+		};
+
+		draw();
 	}
 
 	function startOscillators(oscTarget) {
@@ -190,9 +251,13 @@
 				amp.gain.linearRampToValueAtTime(0.2, now + 14);
 		
 				osc.connect(amp);
-				amp.connect(con.destination);
+				amp.connect(analyser);
+				analyser.connect(con.destination);
 		
 				osc.start();
+				oscOn[0] = true;
+				updateAnalyser();
+				visualize();
 				break;
 			case 2:
 				// create oscillator
@@ -205,6 +270,7 @@
 				osc2.connect(con.destination);
 		
 				osc2.start();
+				oscOn[1] = true;
 				break;
 
 		}
