@@ -99,14 +99,18 @@
         nx.colorize("fill", "#eee");
 
 		toggleStartOsc1.on('*', updateStartUIOsc1);
-		sliderOsc1.on('*', updateSliderUI);
-		keyboardOsc1.on('*', updateKeyboardUI);
-		selectTypeOsc1.on('*', updateOscTypeUI);
+		sliderOsc1.on('*', updateSliderUIOsc1);
+		keyboardOsc1.on('*', updateKeyboardUIOsc1);
+		selectTypeOsc1.on('*', updateOscTypeUIOsc1);
 
 
 		toggleStartOsc2.on('*', updateStartUIOsc2);
+		sliderOsc2.on('*', updateSliderUIOsc2);
 	};
 
+	///////////////////////
+	// OSC 1
+	///////////////////////
 	function updateStartUIOsc1(data) {
 		if (data.value == true) {
 			startOscillators(1);
@@ -115,6 +119,27 @@
 		}
 	}
 
+	function updateSliderUIOsc1(data) {
+		// update osc frequency
+		updateOscFreq(1, data.value);
+	}
+
+	function updateOscTypeUIOsc1(data) {
+		// update osc type
+		updateTypeOfOsc(1, data.text);
+	}
+
+	function updateKeyboardUIOsc1(data) {
+		// update osc frequency
+		updateOscFreq(1, midi_to_freq[data.note]);
+		// update UI
+		forceSliderUpdate(1, midi_to_freq[data.note]);
+	}
+
+
+	///////////////////////
+	// OSC 2
+	///////////////////////
 	function updateStartUIOsc2(data) {
 		if (data.value == true) {
 			startOscillators(2);
@@ -123,23 +148,26 @@
 		}
 	}
 
-	function updateOscTypeUI(data) {
-		// update osc type
-		updateTypeOfOsc(data.text);
-	}
-
-	function updateSliderUI(data) {
+	function updateSliderUIOsc2(data) {
 		// update osc frequency
-		updateOscFreq(data.value);
+		updateOscFreq(2, data.value);
 	}
 
-
-	function updateKeyboardUI(data) {
-		// update sliderOsc1
-		sliderOsc1.set({value:midi_to_freq[data.note]}, true);
-		// update osc frequency
-		updateOscFreq(midi_to_freq[data.note]);
+	///////////////////////
+	// COMMON
+	///////////////////////
+	function forceSliderUpdate(targetOsc, data) {
+		// force slider update
+		switch (targetOsc) {
+			case 1:
+				sliderOsc1.set({value:data}, true);
+				break;
+			case 2:
+				sliderOsc1.set({value:data}, true);
+				break;
+		}
 	}
+
 </script>
 
 <script>
@@ -166,24 +194,32 @@
 	var visuAnalyserCtx = visuAnalyser.getContext("2d");
 	var drawVisual;
 
-	function updateOscFreq(freq) {
-		try {
-			osc.frequency.value = freq;
-		} catch (e) {
-			logError(e);
+	function updateOscFreq(oscTarget, freq) {
+		switch (oscTarget) {
+			case 1:
+				try {
+					osc.frequency.value = freq;
+				} catch (e) {
+					logError(e);
+				}
+				break;
+			case 2:
+				try {
+					osc2.frequency.value = freq;
+				} catch (e) {
+					logError(e);
+				}
+				break;
 		}
 	}
 
-	function updateTypeOfOsc(value) {
+	function updateTypeOfOsc(oscTarget, value) {
 		typeOfOsc1 = value;
 		try {
 			osc.type = typeOfOsc1;
 		} catch (e) {
 			logError(e);
 		}
-	}
-
-	function updateAnalyser() {
 	}
 
 	function visualize() {
@@ -255,8 +291,11 @@
 				analyser.connect(con.destination);
 		
 				osc.start();
+				// update slider
+				forceSliderUpdate(oscTarget, osc.frequency.value);
+
 				oscOn[0] = true;
-				updateAnalyser();
+
 				visualize();
 				break;
 			case 2:
@@ -270,6 +309,9 @@
 				osc2.connect(con.destination);
 		
 				osc2.start();
+				// update slider
+				forceSliderUpdate(oscTarget, osc.frequency.value);
+
 				oscOn[1] = true;
 				break;
 
@@ -342,7 +384,7 @@
 /////////////////////////////////////
 /////////////////////////////////////
 
-	var DEBUG = false;
+	var DEBUG = true;
 
 	var midi_to_freq = {
 		48:130.8127826503,
