@@ -63,10 +63,24 @@
 			</div>
 
 			<div class="pair">
-				<canvas id="Osc2" nx="dial" class="lower-control"
+				<canvas id="filterUIOsc2" nx="dial" class="lower-control"
 						></canvas>
-				<div>Delay</div>
+				<div>BiquadFilter</div>
 			</div>
+
+			<div class="pair">
+				<canvas id="distortionUIOsc2" nx="dial" class="lower-control"
+						></canvas>
+				<div>Distortion</div>
+			</div>
+
+			<div class="pair">
+				<canvas id="convolverUIOsc2" nx="dial" class="lower-control"
+						></canvas>
+				<div>Convolver</div>
+			</div>
+
+
 
 			<div>
 				<canvas id="sliderOsc2" nx="slider"
@@ -95,6 +109,9 @@
 	var positionOsc2;
 	var gainOsc2;
 	var delayUIOsc2;
+	var filterUIOsc2;
+	var distortionUIOsc2;
+	var convolverUIOsc2;
 
 	nx.onload = function() {
 		nx.colorize("accent", "#347");
@@ -112,6 +129,9 @@
 		positionOsc2.on('*', updatePositionUIOsc2);
 		gainOsc2.on('*', updateGainUIOsc2);
 		delayUIOsc2.on('*', updateDelayUIOsc2);
+		filterUIOsc2.on('*', updateFilterUIOsc2);
+		distortionUIOsc2.on('*', updateDistortionUIOsc2);
+		convolverUIOsc2.on('*', updateConvolverUIOsc2);
 	};
 
 	///////////////////////
@@ -171,17 +191,26 @@
 	}
 
 	function updateGainUIOsc2(data) {
-		console.log(data);
 		updateGain(2, data.value * 1000);
 	}
 
 	function updateDelayUIOsc2(data) {
-		console.log(data);
 		updateDelay(2, data.value);
 	}
 
+	function updateFilterUIOsc2(data) {
+		updateFilter(2, data.value);
+	}
+
+	function updateDistortionUIOsc2(data) {
+		updateDistortion(2, Math.abs(data.value * 400));
+	}
+
+	function updateConvolverUIOsc2(data) {
+		updateConvolver(2, data.value);
+	}
+
 	function forcePositionUpdate(data) {
-		console.log("toto" + data);
 		// update UI
 	}
 
@@ -222,6 +251,9 @@
     var ampOsc2;
     var lfoOsc2;
     var delayOsc2;
+    var filterOsc2;
+    var convolverDelayOsc2;
+    var distortionOsc2;
 	var typeOfOsc2 = 'sine';
 
 	var analyser = con.createAnalyser();
@@ -236,6 +268,61 @@
 			case 2:
 				try {
 					delayOsc2.delayTime.value = delay;
+				} catch (e) {
+					logError(e);
+				}
+				break;
+		}
+	}
+
+	function updateFilter(oscTarget, freq) {
+		switch (oscTarget) {
+			case 2:
+				try {
+					filterOsc2.frequency.value = freq * 1000;
+					filterOsc2.Q.value = freq * 100;
+				} catch (e) {
+					logError(e);
+				}
+				break;
+		}
+	}
+
+	function updateConvoler(oscTarget, delay) {
+		switch (oscTarget) {
+			case 2:
+				try {
+					convolverDelayOsc2.delayTime.value = delay;
+				} catch (e) {
+					logError(e);
+				}
+				break;
+		}
+	}
+
+
+
+	function makeDistortionCurve(amount) {
+		var k = typeof amount === 'number' ? amount : 50,
+		n_samples = 44100,
+		curve = new Float32Array(n_samples),
+		deg = Math.PI / 180,
+		i = 0,
+		x;
+		for ( ; i < n_samples; ++i ) {
+			x = i * 2 / n_samples - 1;
+			curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
+		}
+		return curve;
+	};
+
+
+
+	function updateDistortion(oscTarget, freq) {
+		switch (oscTarget) {
+			case 2:
+				try {
+					distortionOsc2.curve = makeDistortionCurve(freq);
 				} catch (e) {
 					logError(e);
 				}
@@ -394,12 +481,24 @@
     
 				delayOsc2 = con.createDelay(1);
 
+				filterOsc2 = con.createBiquadFilter();
+				filterOsc2.frequency.value = 100;
+				filterOsc2.gain.value = 25;
+
+				distortionOsc2 = con.createWaveShaper();
+
+				var convolver = con.createConvolver();
+				convolverDelayOsc2 = con.createDelay(1);
+
 				var now = con.currentTime;
 		
 				lfoOsc2.connect(ampOsc2);
 				ampOsc2.connect(osc2.frequency);
 				osc2.connect(delayOsc2);
-				delayOsc2.connect(con.destination);
+				delayOsc2.connect(filterOsc2);
+				filterOsc2.connect(distortionOsc2);
+				distortionOsc2.connect(convolverDelayOsc2);
+				convolverDelayOsc2.connect(con.destination);
 		
 				osc2.start();
 				lfoOsc2.start();
