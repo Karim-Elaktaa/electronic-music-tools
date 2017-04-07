@@ -71,7 +71,7 @@
 			<div>
 				<canvas id="sliderOsc2" nx="slider"
 						min="100" max="1000"></canvas>
-				<canvas nx="position"></canvas>
+				<canvas id="positionOsc2" nx="position"></canvas>
 			</div>
 		</div>
 
@@ -92,6 +92,7 @@
 
 	var toggleStartOsc2;
 	var sliderOsc2;
+	var positionOsc2;
 
 	nx.onload = function() {
 		nx.colorize("accent", "#347");
@@ -106,6 +107,7 @@
 
 		toggleStartOsc2.on('*', updateStartUIOsc2);
 		sliderOsc2.on('*', updateSliderUIOsc2);
+		positionOsc2.on('*', updatePositionUIOsc2);
 	};
 
 	///////////////////////
@@ -153,6 +155,15 @@
 		updateOscFreq(2, data.value);
 	}
 
+	function updatePositionUIOsc2(data) {
+		console.log(data.x);
+		var freq = data.x * 1000;
+		// update osc frequency
+		updateOscFreq(2, freq);
+		// update UI
+		forceSliderUpdate(2, freq);
+	}
+
 	///////////////////////
 	// COMMON
 	///////////////////////
@@ -163,7 +174,7 @@
 				sliderOsc1.set({value:data}, true);
 				break;
 			case 2:
-				sliderOsc1.set({value:data}, true);
+				sliderOsc2.set({value:data}, true);
 				break;
 		}
 	}
@@ -214,11 +225,23 @@
 	}
 
 	function updateTypeOfOsc(oscTarget, value) {
-		typeOfOsc1 = value;
-		try {
-			osc.type = typeOfOsc1;
-		} catch (e) {
-			logError(e);
+		switch (oscTarget) {
+			case 1:
+				try {
+					typeOfOsc1 = value;
+					osc.type = typeOfOsc1;
+				} catch (e) {
+					logError(e);
+				}
+				break;
+			case 2:
+				try {
+					typeOfOsc2 = value;
+					osc2.type = typeOfOsc1;
+				} catch (e) {
+					logError(e);
+				}
+				break;
 		}
 	}
 
@@ -308,9 +331,9 @@
 		
 				osc2.connect(con.destination);
 		
-				osc2.start();
+				//osc2.start();
 				// update slider
-				forceSliderUpdate(oscTarget, osc.frequency.value);
+				forceSliderUpdate(oscTarget, osc2.frequency.value);
 
 				oscOn[1] = true;
 				break;
