@@ -12,9 +12,9 @@
 <body>
 	<div id="main">
 
-		<div style="width:840px; height:320px; display:block;">
+		<div style="width:840px; height:220px; display:block;">
 			<canvas class="visuAnalyser" 
-					width="840" height="320px">
+					width="840" height="220px">
 			</canvas>
 		</div>
 
@@ -169,7 +169,6 @@
 	}
 
 	function updatePositionUIOsc2(data) {
-		console.log(data);
 		var freq = data.x * 1000;
 		// update osc frequency
 		updateOscFreq(2, freq);
@@ -368,7 +367,6 @@
 		analyser.fftSize = 2048;
 		var bufferLength = analyser.fftSize;
 		var dataArray = new Uint8Array(bufferLength);
-		console.log(dataArray);
 
 		visuAnalyserCtx.clearRect(0, 0, WIDTH, HEIGHT);
 
