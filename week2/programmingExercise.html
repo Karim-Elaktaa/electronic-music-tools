@@ -13,7 +13,6 @@
 	<div id="main">
 
 		<div style="width:840px; height:320px; display:block;">
-			<div> ... </div>
 			<canvas class="visuAnalyser" 
 					width="840" height="320px">
 			</canvas>
@@ -79,8 +78,6 @@
 						></canvas>
 				<div>Convolver</div>
 			</div>
-
-
 
 			<div>
 				<canvas id="sliderOsc2" nx="slider"
@@ -300,8 +297,6 @@
 		}
 	}
 
-
-
 	function makeDistortionCurve(amount) {
 		var k = typeof amount === 'number' ? amount : 50,
 		n_samples = 44100,
@@ -315,8 +310,6 @@
 		}
 		return curve;
 	};
-
-
 
 	function updateDistortion(oscTarget, freq) {
 		switch (oscTarget) {
@@ -404,11 +397,12 @@
 			drawVisual = requestAnimationFrame(draw);
 			analyser.getByteTimeDomainData(dataArray);
 
-			visuAnalyserCtx.fillStyle = 'rgb(200, 200, 200)';
+			visuAnalyserCtx.fillStyle = 'rgb(255, 255, 255)';
+
 			visuAnalyserCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
 			visuAnalyserCtx.lineWidth = 2;
-			visuAnalyserCtx.strokeStyle = 'rgb(0, 0, 0)';
+			visuAnalyserCtx.strokeStyle = '#347';
 
 			visuAnalyserCtx.beginPath();
 
