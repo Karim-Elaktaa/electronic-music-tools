@@ -73,12 +73,6 @@
 				<div>Distortion</div>
 			</div>
 
-			<div class="pair">
-				<canvas id="convolverUIOsc2" nx="dial" class="lower-control"
-						></canvas>
-				<div>Convolver</div>
-			</div>
-
 			<div>
 				<canvas id="sliderOsc2" nx="slider"
 						min="100" max="1000"></canvas>
@@ -108,7 +102,6 @@
 	var delayUIOsc2;
 	var filterUIOsc2;
 	var distortionUIOsc2;
-	var convolverUIOsc2;
 
 	nx.onload = function() {
 		nx.colorize("accent", "#347");
@@ -128,7 +121,6 @@
 		delayUIOsc2.on('*', updateDelayUIOsc2);
 		filterUIOsc2.on('*', updateFilterUIOsc2);
 		distortionUIOsc2.on('*', updateDistortionUIOsc2);
-		convolverUIOsc2.on('*', updateConvolverUIOsc2);
 	};
 
 	///////////////////////
@@ -249,7 +241,6 @@
     var lfoOsc2;
     var delayOsc2;
     var filterOsc2;
-    var convolverDelayOsc2;
     var distortionOsc2;
 	var typeOfOsc2 = 'sine';
 
@@ -278,18 +269,6 @@
 				try {
 					filterOsc2.frequency.value = freq * 1000;
 					filterOsc2.Q.value = freq * 100;
-				} catch (e) {
-					logError(e);
-				}
-				break;
-		}
-	}
-
-	function updateConvoler(oscTarget, delay) {
-		switch (oscTarget) {
-			case 2:
-				try {
-					convolverDelayOsc2.delayTime.value = delay;
 				} catch (e) {
 					logError(e);
 				}
@@ -481,9 +460,6 @@
 
 				distortionOsc2 = con.createWaveShaper();
 
-				var convolver = con.createConvolver();
-				convolverDelayOsc2 = con.createDelay(1);
-
 				var now = con.currentTime;
 		
 				lfoOsc2.connect(ampOsc2);
@@ -491,8 +467,8 @@
 				osc2.connect(delayOsc2);
 				delayOsc2.connect(filterOsc2);
 				filterOsc2.connect(distortionOsc2);
-				distortionOsc2.connect(convolverDelayOsc2);
-				convolverDelayOsc2.connect(con.destination);
+				distortionOsc2.connect(analyser);
+				analyser.connect(con.destination);
 		
 				osc2.start();
 				lfoOsc2.start();
@@ -500,6 +476,7 @@
 				forceSliderUpdate(oscTarget, osc2.frequency.value);
 
 				oscOn[1] = true;
+				visualize();
 				break;
 		}
 	}
