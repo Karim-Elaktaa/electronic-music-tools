@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+	<head>
+		<script src="../ext/nexusUI.js"></script>
+		<meta http-equiv="content-type" context="text/html"; charset="utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+
+<body>
+	<div style="background:red; height:100%; width:100%">
+	</div>
+</body>
+
+<script>
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var con = new audio_context();
+
+	var hat;
+
+	loadSample("002_et1hit1.wav", function (buffer) {
+		hat = buffer;
+		var player = con.createBufferSource();
+		player.buffer = hat;
+		player.start();
+		player.loop = true;
+		player.connect(con.destination);
+	});
+	function loadSample(url, callback) {
+		var request = new XMLHttpRequest();
+		request.open('GET', url, true);
+		request.responseType = 'arraybuffer';
+		request.onload = function() {
+			var audioData = request.response;
+			con.decodeAudioData(audioData, function(buffer) {
+				console.log(buffer);
+				callback(buffer);
+			});
+		};
+		request.send();
+	}
+</script>
+
+</html>
