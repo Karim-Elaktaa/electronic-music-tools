@@ -3,14 +3,18 @@
 
 <html lang="en">
 	<head>
-		<script src="../ext/nexusUI.js"></script>
 		<meta http-equiv="content-type" context="text/html"; charset="utf-8">
 		<title>Electronic Music Tools</title>
 	</head>
 
 
 <body>
-	<div style="background:red; height:100%; width:100%">
+	<div
+		style = "background:red; height:50px; width:50px"
+		tabindex = "0"
+		onkeydown = "playHat()"
+	>
+
 	</div>
 </body>
 
@@ -22,12 +26,8 @@
 
 	loadSample("002_et1hit1.wav", function (buffer) {
 		hat = buffer;
-		var player = con.createBufferSource();
-		player.buffer = hat;
-		player.start();
-		player.loop = true;
-		player.connect(con.destination);
 	});
+
 	function loadSample(url, callback) {
 		var request = new XMLHttpRequest();
 		request.open('GET', url, true);
@@ -40,6 +40,14 @@
 			});
 		};
 		request.send();
+	}
+
+	function playHat() {
+		var player = con.createBufferSource();
+		player.buffer = hat;
+		player.start();
+		player.loop = false;
+		player.connect(con.destination);
 	}
 </script>
 
