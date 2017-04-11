@@ -23,12 +23,19 @@
 	var con = new audio_context();
 
 	var hat;
-	var hat_seq = [1, 1, 1, 1];
+	var snare;
+
+	var hat_seq = [0, 1, 1, 1];
+	var snare_seq = [0, 0, 0, 1];
 	var step = 0;
-	var interval = 0.125/2;
+	var interval = 0.125;
 
 	loadSample("cl_hat_3001.wav", function (buffer) {
 		hat = buffer;
+	});
+
+	loadSample("brp_snrim1.wav", function (buffer) {
+		snare = buffer;
 	});
 
 	function loadSample(url, callback) {
@@ -45,12 +52,12 @@
 		request.send();
 	}
 
-	function playHat() {
+	function playSound(buffer, time) {
 		var player = con.createBufferSource();
-		player.buffer = hat;
-		player.start();
+		player.buffer = buffer;
 		player.loop = false;
 		player.connect(con.destination);
+		player.start();
 	}
 
 	var wait_time = 0.5;
@@ -66,10 +73,14 @@
 		while (now <= max_future_time) {
 			step++;
 			if (hat_seq[step % hat_seq.length]) {
-				playHat(now);
+				playSound(hat, now);
 			}
-			now += interval;
 
+			if (snare_seq[step % snare_seq.length]) {
+				playSound(snare, now);
+			}
+
+			now += interval;
 		}
 		got_up_to = now;
 	}, wait_time * 1000);
