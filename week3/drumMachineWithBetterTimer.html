@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" context="text/html"; charset="utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+
+<body>
+	<div
+		style = "background:red; height:50px; width:50px"
+		tabindex = "0"
+		onkeydown = "playHat()"
+	>
+
+	</div>
+</body>
+
+<script>
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var con = new audio_context();
+
+	var hat;
+	var hat_seq = [1, 1, 1, 1];
+	var step = 0;
+	var interval = 0.125/2;
+
+	loadSample("cl_hat_3001.wav", function (buffer) {
+		hat = buffer;
+	});
+
+	function loadSample(url, callback) {
+		var request = new XMLHttpRequest();
+		request.open('GET', url, true);
+		request.responseType = 'arraybuffer';
+		request.onload = function() {
+			var audioData = request.response;
+			con.decodeAudioData(audioData, function(buffer) {
+				console.log(buffer);
+				callback(buffer);
+			});
+		};
+		request.send();
+	}
+
+	function playHat() {
+		var player = con.createBufferSource();
+		player.buffer = hat;
+		player.start();
+		player.loop = false;
+		player.connect(con.destination);
+	}
+
+	var wait_time = 0.5;
+	var got_up_to;
+
+	setInterval(function () {
+		var now = con.currentTime;
+		var max_future_time = now + (wait_time * 1.5);
+		if (got_up_to > now) {
+			now = got_up_to;
+		}
+
+		while (now <= max_future_time) {
+			step++;
+			if (hat_seq[step % hat_seq.length]) {
+				playHat(now);
+			}
+			now += interval;
+
+		}
+		got_up_to = now;
+	}, wait_time * 1000);
+
+</script>
+
+</html>
