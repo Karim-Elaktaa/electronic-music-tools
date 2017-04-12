@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+	<head>
+		<script src="../ext/nexusUI.js"></script>
+		<meta http-equiv="content-type" context="text/html"; charset="utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+
+<body>
+	<div>
+		<canvas id="matrix" nx="matrix"></canvas>
+	</div>
+</body>
+
+<script>
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var con = new audio_context();
+
+	var hat;
+	var snare;
+
+	var seq = 
+	[
+		[0, 0, 0, 0],
+		[0, 0, 0, 0]
+	];
+	var step = 0;
+	var interval = 0.125;
+
+	var matrix;
+	nx.onload = function () {
+		matrix.col = seq[0].length;
+		matrix.row = seq.length;
+		matrix.init();
+
+		matrix.on('*', function (data) {
+			console.log(data);
+			seq[data.row][data.col] = data.level;
+		});
+	};
+
+	loadSample("cl_hat_3001.wav", function (buffer) {
+		hat = buffer;
+	});
+
+	loadSample("brp_snrim1.wav", function (buffer) {
+		snare = buffer;
+	});
+
+	function loadSample(url, callback) {
+		var request = new XMLHttpRequest();
+		request.open('GET', url, true);
+		request.responseType = 'arraybuffer';
+		request.onload = function() {
+			var audioData = request.response;
+			con.decodeAudioData(audioData, function(buffer) {
+				console.log(buffer);
+				callback(buffer);
+			});
+		};
+		request.send();
+	}
+
+	function playSound(buffer, time) {
+		var player = con.createBufferSource();
+		player.buffer = buffer;
+		player.loop = false;
+		player.connect(con.destination);
+		player.start(time);
+	}
+
+	var wait_time = 0.5;
+	var got_up_to;
+
+	setInterval(function () {
+		var now = con.currentTime;
+		var max_future_time = now + (wait_time * 1.5);
+		if (got_up_to > now) {
+			now = got_up_to;
+		}
+
+		while (now <= max_future_time) {
+			step++;
+			if (seq[0][step % seq[0].length]) {
+				playSound(hat, now);
+			}
+
+			if (seq[1][step % seq[1].length]) {
+				playSound(snare, now);
+			}
+
+			now += interval;
+		}
+		got_up_to = now;
+	}, wait_time * 1000);
+
+</script>
+
+</html>
