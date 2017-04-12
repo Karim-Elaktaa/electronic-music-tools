@@ -28,7 +28,7 @@
 		[0, 0, 0, 0]
 	];
 	var step = 0;
-	var interval = 0.125;
+	var interval = 0.1;
 
 	var matrix;
 	nx.onload = function () {
@@ -37,8 +37,9 @@
 		matrix.init();
 
 		matrix.on('*', function (data) {
-			console.log(data);
-			seq[data.row][data.col] = data.level;
+				if (data.row == 1 || data.row == 0) {
+					seq[data.row][data.col] = data.level;
+				}
 		});
 	};
 
@@ -57,7 +58,6 @@
 		request.onload = function() {
 			var audioData = request.response;
 			con.decodeAudioData(audioData, function(buffer) {
-				console.log(buffer);
 				callback(buffer);
 			});
 		};
@@ -72,11 +72,14 @@
 		player.start(time);
 	}
 
-	var wait_time = 0.5;
+	var wait_time = 0.05;
 	var got_up_to;
 
 	setInterval(function () {
 		var now = con.currentTime;
+
+		matrix.jumpToCol(step % seq[0].length);
+
 		var max_future_time = now + (wait_time * 1.5);
 		if (got_up_to > now) {
 			now = got_up_to;
