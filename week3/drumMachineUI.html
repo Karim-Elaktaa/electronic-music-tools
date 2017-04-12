@@ -37,7 +37,7 @@
 		matrix.init();
 
 		matrix.on('*', function (data) {
-				if (data.row == 1 || data.row == 0) {
+				if (data.row != undefined) {
 					seq[data.row][data.col] = data.level;
 				}
 		});
