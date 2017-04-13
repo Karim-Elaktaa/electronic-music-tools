@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+	<head>
+		<script src="../ext/nexusUI.js"></script>
+		<meta http-equiv="content-type" context="text/html"; charset="utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+<body>
+	<div id="main">
+		<div>
+			<canvas id="matrix" nx="matrix">
+			</canvas>
+		</div>
+		<div class="pair">
+			<canvas id="toto" nx="dial" 
+					class="lower-control">
+			</canvas>
+			<div>Distortion</div>
+		</div>
+	</div>
+</body>
+
+<script>
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var con = new audio_context();
+
+	var s1 = "002_et1hit1.wav";
+	var s2 = "brp_snrim1.wav";
+	var s3 = "cl_hat_3001.wav";
+	var s4 = "002_et1hit1.wav";
+	var s5 = "cl_hat_3001.wav";
+	var sounds = [s1, s2, s3, s4, s5];
+	var buffers = new Array();
+
+	var seq = 
+	[
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0]
+	];
+	var step = 0;
+	var interval = 0.1;
+
+	loadSamples();
+
+	var matrix;
+	nx.onload = function () {
+		nx.colorize("accent", "#347");
+        nx.colorize("border", "#bbb");
+        nx.colorize("fill", "#eee");
+
+		matrix.col = seq[0].length;
+		matrix.row = seq.length;
+		matrix.init();
+
+		matrix.on('*', function (data) {
+				if (data.row != undefined) {
+					seq[data.row][data.col] = data.level;
+				}
+		});
+	};
+
+	var wait_time = 0.05;
+	var got_up_to;
+
+	setInterval(function () {
+		var now = con.currentTime;
+
+		matrix.jumpToCol(step % seq[0].length);
+
+		var max_future_time = now + (wait_time * 1.5);
+		if (got_up_to > now) {
+			now = got_up_to;
+		}
+
+		while (now <= max_future_time) {
+			step++;
+			for (var i = 0; i < seq.length; i++) {
+				if (seq[i][step % seq[i].length]) {
+					playSound(buffers[i], now);
+				}
+			}
+			now += interval;
+		}
+		got_up_to = now;
+	}, wait_time * 1000);
+
+	function loadSamples() {
+		for (var i = 0; i < sounds.length; i++) {
+			loadSample(sounds[i], function (buffer) {
+				buffers.push(buffer);
+			});
+		}
+	}
+
+	function loadSample(url, callback) {
+		var request = new XMLHttpRequest();
+		request.open('GET', url, true);
+		request.responseType = 'arraybuffer';
+		request.onload = function() {
+			var audioData = request.response;
+			con.decodeAudioData(audioData, function(buffer) {
+				callback(buffer);
+			});
+		};
+		request.send();
+	}
+
+	function playSound(buffer, time) {
+		var player = con.createBufferSource();
+		player.buffer = buffer;
+		player.loop = false;
+		player.connect(con.destination);
+		player.start(time);
+	}
+</script>
+
+<style>
+	body {
+		margin:0;
+		padding:0;
+	}
+	#main {
+		width: 50%;
+		margin: auto;
+	}
+	.lower-control {
+		height:65px;
+		width:65px;
+		display:block;
+	}
+	.pair {
+		display:inline-block;
+		margin:10px 5px;
+	}
+	.pair div {
+		text-align:center;
+		font-family:helvetica;
+		font-size:9pt;
+		font-weight:500;
+		color:#aaa;
+		margin:10px 0px;
+	}
+</style>
+
+</html>
