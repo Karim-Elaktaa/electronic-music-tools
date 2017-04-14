@@ -15,7 +15,7 @@
 			</canvas>
 		</div>
 		<div class="pair">
-			<canvas id="toto" nx="dial" 
+			<canvas id="toto" nx="dial"
 					class="lower-control">
 			</canvas>
 			<div>Distortion</div>
@@ -30,12 +30,12 @@
 	var s1 = "002_et1hit1.wav";
 	var s2 = "brp_snrim1.wav";
 	var s3 = "cl_hat_3001.wav";
-	var s4 = "002_et1hit1.wav";
-	var s5 = "cl_hat_3001.wav";
+	var s4 = "CB.WAV";
+	var s5 = "CP.WAV";
 	var sounds = [s1, s2, s3, s4, s5];
 	var buffers = new Array();
 
-	var seq = 
+	var seq =
 	[
 		[0, 0, 0, 0, 0, 0, 0],
 		[0, 0, 0, 0, 0, 0, 0],
@@ -117,6 +117,10 @@
 		player.loop = false;
 		player.connect(con.destination);
 		player.start(time);
+	}
+
+	function initMatrix() {
+		sliderOsc1.set({value:data}, true);
 	}
 </script>
 
