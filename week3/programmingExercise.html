@@ -83,8 +83,8 @@
 	var s5 = "CP.WAV";
 	var sounds = [s1, s2, s3, s4, s5];
 	// array used to keep the diffent buffers of the samples
-	var buffers = new Array();
-	var gains = new Array();
+	var buffers = [];
+	var gains = [];
 
 	var seq =
 	[
@@ -108,7 +108,7 @@
 		matrix.init();
 
 		matrix.on('*', function (data) {
-				if (data.row != undefined) {
+				if (data.row !== undefined) {
 					seq[data.row][data.col] = data.level;
 				}
 		});
@@ -158,7 +158,7 @@
 			step++;
 			for (var i = 0; i < seq.length; i++) {
 				if (seq[i][step % seq[i].length]) {
-					if (buffers[i] != undefined) {
+					if (buffers[i] !== undefined) {
 						playSound(buffers[i], gains[i], now);
 					}
 				}
@@ -169,10 +169,11 @@
 	}, wait_time * 1000);
 
 	function loadSamples() {
+		function addSample(buffer) {
+			buffers.push(buffer);
+		}
 		for (var i = 0; i < sounds.length; i++) {
-			loadSample(sounds[i], function (buffer) {
-				buffers.push(buffer);
-			});
+			loadSample(sounds[i], addSample);
 		}
 	}
 
@@ -193,7 +194,7 @@
 		var player = con.createBufferSource();
 		player.buffer = buffer;
 		player.loop = false;
-		if (gain == undefined) {
+		if (gain === undefined) {
 			player.connect(con.destination);
 		} else {
 			player.connect(gain);
@@ -218,7 +219,7 @@
 	}
 
 	function setGain(target, data) {
-		if (gains[target] == undefined) {
+		if (gains[target] === undefined) {
 			gains[target] = con.createGain();
 		}
 		gains[target].gain.value = data;
