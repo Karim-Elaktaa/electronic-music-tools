@@ -10,15 +10,20 @@
 
 <body>
 	<div id="main">
-		<div>
-			<canvas id="matrix" nx="matrix">
-			</canvas>
-		</div>
-		<div class="pair">
-			<canvas id="toto" nx="dial"
-					class="lower-control">
-			</canvas>
-			<div>Distortion</div>
+		<div id="mainFrame" class="frame">
+			<div class="pair">
+				<canvas id="bpmSlider" nx="slider"
+						min="60" max="250"></canvas>
+				<canvas id="matrix" nx="matrix">
+				</canvas>
+			</div>
+
+			<div class="pair">
+				<canvas id="toto" nx="dial"
+						class="lower-control">
+				</canvas>
+				<div>Distortion</div>
+			</div>
 		</div>
 	</div>
 </body>
@@ -29,6 +34,7 @@
 
 	// UI var
 	var matrix;
+	var bpmSlider;
 	// samples path
 	var s1 = "002_et1hit1.wav";
 	var s2 = "brp_snrim1.wav";
@@ -38,6 +44,7 @@
 	var sounds = [s1, s2, s3, s4, s5];
 	// array used to keep the diffent buffers of the samples
 	var buffers = new Array();
+	var gain;
 
 	var seq =
 	[
@@ -65,8 +72,12 @@
 					seq[data.row][data.col] = data.level;
 				}
 		});
-		initMatrix();
 
+		bpmSlider.on('*', function (data) {
+			setTempo(data.value);
+		});
+
+		initMatrix();
 	};
 
 
@@ -122,7 +133,10 @@
 		var player = con.createBufferSource();
 		player.buffer = buffer;
 		player.loop = false;
-		player.connect(con.destination);
+		gain = con.createGain();
+		gain.gain.value = 10;
+		player.connect(gain);
+		gain.connect(con.destination);
 		player.start(time);
 	}
 
@@ -136,34 +150,45 @@
 		}
 		matrix.draw();
 	}
+
+	function setTempo(data) {
+		interval = 30 / data;
+	}
 </script>
 
 <style>
-	body {
-		margin:0;
-		padding:0;
-	}
-	#main {
-		width: 50%;
-		margin: auto;
-	}
-	.lower-control {
-		height:65px;
-		width:65px;
-		display:block;
-	}
-	.pair {
-		display:inline-block;
-		margin:10px 5px;
-	}
-	.pair div {
-		text-align:center;
-		font-family:helvetica;
-		font-size:9pt;
-		font-weight:500;
-		color:#aaa;
-		margin:10px 0px;
-	}
+body {
+	margin:0;
+	padding:0;
+}
+#main {
+	width: 50%;
+	margin: auto;
+}
+.lower-control {
+	height:65px;
+	width:65px;
+	display:block;
+}
+.pair {
+	display:inline-block;
+	margin:10px 5px;
+}
+.pair div {
+	text-align:center;
+	font-family:helvetica;
+	font-size:9pt;
+	font-weight:500;
+	color:#aaa;
+	margin:10px 0px;
+}
+.frame{
+	border: 3px #ededed solid;
+	padding:10px 10px;
+	margin:2px 5px;
+	border-radius: 25px;
+}
+
 </style>
 
 </html>
