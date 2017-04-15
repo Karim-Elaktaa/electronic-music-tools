@@ -12,17 +12,52 @@
 	<div id="main">
 		<div id="mainFrame" class="frame">
 			<div class="pair">
-				<canvas id="bpmSlider" nx="slider"
-						min="60" max="250"></canvas>
-				<canvas id="matrix" nx="matrix">
+				<div class="pair">
+					<canvas id="bpmSlider" nx="slider"
+							min="60" max="250"></canvas>
+
+					<div>BPM</div>
+				</div>
+				<canvas id="matrix" nx="matrix"
+						width="170px" height="130px">
 				</canvas>
 			</div>
 
+			<br/>
+
 			<div class="pair">
-				<canvas id="toto" nx="dial"
+				<canvas id="dial1" nx="dial" min="0" max="10"
 						class="lower-control">
 				</canvas>
-				<div>Distortion</div>
+				<div>Volume</div>
+			</div>
+
+			<div class="pair">
+				<canvas id="dial2" nx="dial" min="0" max="10"
+						class="lower-control">
+				</canvas>
+				<div>Volume</div>
+			</div>
+
+			<div class="pair">
+				<canvas id="dial3" nx="dial" min="0" max="10"
+						class="lower-control">
+				</canvas>
+				<div>Volume</div>
+			</div>
+
+			<div class="pair">
+				<canvas id="dial4" nx="dial" min="0" max="10"
+						class="lower-control">
+				</canvas>
+				<div>Volume</div>
+			</div>
+
+			<div class="pair">
+				<canvas id="dial5" nx="dial" min="0" max="10"
+						class="lower-control">
+				</canvas>
+				<div>Volume</div>
 			</div>
 		</div>
 	</div>
@@ -35,6 +70,11 @@
 	// UI var
 	var matrix;
 	var bpmSlider;
+	var dial1;
+	var dial2;
+	var dial3;
+	var dial4;
+	var dial5;
 	// samples path
 	var s1 = "002_et1hit1.wav";
 	var s2 = "brp_snrim1.wav";
@@ -44,7 +84,7 @@
 	var sounds = [s1, s2, s3, s4, s5];
 	// array used to keep the diffent buffers of the samples
 	var buffers = new Array();
-	var gain;
+	var gains = new Array();
 
 	var seq =
 	[
@@ -77,6 +117,26 @@
 			setTempo(data.value);
 		});
 
+		dial1.on('*', function (data) {
+			setGain(0, data.value);
+		});
+
+		dial2.on('*', function (data) {
+			setGain(1, data.value);
+		});
+
+		dial3.on('*', function (data) {
+			setGain(2, data.value);
+		});
+
+		dial4.on('*', function (data) {
+			setGain(3, data.value);
+		});
+
+		dial5.on('*', function (data) {
+			setGain(4, data.value);
+		});
+
 		initMatrix();
 	};
 
@@ -99,7 +159,7 @@
 			for (var i = 0; i < seq.length; i++) {
 				if (seq[i][step % seq[i].length]) {
 					if (buffers[i] != undefined) {
-						playSound(buffers[i], now);
+						playSound(buffers[i], gains[i], now);
 					}
 				}
 			}
@@ -129,14 +189,16 @@
 		request.send();
 	}
 
-	function playSound(buffer, time) {
+	function playSound(buffer, gain, time) {
 		var player = con.createBufferSource();
 		player.buffer = buffer;
 		player.loop = false;
-		gain = con.createGain();
-		gain.gain.value = 10;
-		player.connect(gain);
-		gain.connect(con.destination);
+		if (gain == undefined) {
+			player.connect(con.destination);
+		} else {
+			player.connect(gain);
+			gain.connect(con.destination);
+		}
 		player.start(time);
 	}
 
@@ -153,6 +215,13 @@
 
 	function setTempo(data) {
 		interval = 30 / data;
+	}
+
+	function setGain(target, data) {
+		if (gains[target] == undefined) {
+			gains[target] = con.createGain();
+		}
+		gains[target].gain.value = data;
 	}
 </script>
 
