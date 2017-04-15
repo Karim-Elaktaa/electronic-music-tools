@@ -27,12 +27,16 @@
 	var audio_context = window.AudioContext || window.webkitAudioContext;
 	var con = new audio_context();
 
+	// UI var
+	var matrix;
+	// samples path
 	var s1 = "002_et1hit1.wav";
 	var s2 = "brp_snrim1.wav";
 	var s3 = "cl_hat_3001.wav";
 	var s4 = "CB.WAV";
 	var s5 = "CP.WAV";
 	var sounds = [s1, s2, s3, s4, s5];
+	// array used to keep the diffent buffers of the samples
 	var buffers = new Array();
 
 	var seq =
@@ -47,8 +51,6 @@
 	var interval = 0.1;
 
 	loadSamples();
-
-	var matrix;
 	nx.onload = function () {
 		nx.colorize("accent", "#347");
         nx.colorize("border", "#bbb");
@@ -63,7 +65,10 @@
 					seq[data.row][data.col] = data.level;
 				}
 		});
+		initMatrix();
+
 	};
+
 
 	var wait_time = 0.05;
 	var got_up_to;
@@ -82,7 +87,9 @@
 			step++;
 			for (var i = 0; i < seq.length; i++) {
 				if (seq[i][step % seq[i].length]) {
-					playSound(buffers[i], now);
+					if (buffers[i] != undefined) {
+						playSound(buffers[i], now);
+					}
 				}
 			}
 			now += interval;
@@ -120,7 +127,14 @@
 	}
 
 	function initMatrix() {
-		sliderOsc1.set({value:data}, true);
+		for (var i = 0; i < seq.length; i++) {
+			for (var j = 0; j < seq[0].length; j++) {
+				var random = Math.random() > 0.9 ? 1 : 0;
+				seq[i][j] = random;
+				matrix.matrix[j][i] = seq[i][j];
+			}
+		}
+		matrix.draw();
 	}
 </script>
 
