@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+	<head>
+		<script src="../ext/nexusUI.js"></script>
+		<meta http-equiv="content-type" context="text/html"; charset="utf-8">
+		<title>Electronic Music Tools</title>
+	</head>
+
+<body>
+	<div id="main"
+		 style="background:red;height:100px;"
+		 onmousedown="changeNote()"
+		>
+	</div>
+</body>
+
+<script>
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var con = new audio_context();
+	var osc = con.createOscillator();
+	con.type = "triangle";
+
+	osc.connect(con.destination);
+	osc.start();
+
+	var freq = 200;
+	osc.frequency.value = freq;
+
+	function changeNote() {
+		freq = Math.random() * 1000;
+		osc.frequency.value = freq;
+	}
+</script>
+
+</html>
