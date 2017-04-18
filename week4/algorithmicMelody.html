@@ -31,6 +31,7 @@
 	function changeNote() {
 		freq = Math.random() * 1000;
 		osc.frequency.value = freq;
+		osc.frequency.setValueAtTime(freq, con.currentTime);
 	}
 </script>
 
