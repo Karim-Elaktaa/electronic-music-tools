@@ -28,10 +28,12 @@
 	var freq = 200;
 	osc.frequency.value = freq;
 
+	setInterval(changeNote, 150);
+
 	function changeNote() {
 		freq = freq * 1.5;
-		if (freq > 2000) {
-			freq = 200 + (Math.random() * 100);
+		if (freq > 1000) {
+			freq = 200 + (Math.random() * 200);
 		}
 		osc.frequency.value = freq;
 		osc.frequency.setValueAtTime(freq, con.currentTime);
