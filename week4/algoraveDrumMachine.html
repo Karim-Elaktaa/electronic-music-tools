@@ -15,6 +15,10 @@
 			id="hat_editor"
 			onkeyup="updateHats()">
 		</textarea>
+		<textarea
+			id="snare_editor"
+			onkeyup="updateSnares()">
+		</textarea>
 	</div>
 </body>
 
@@ -88,10 +92,13 @@
 
 	function updateHats() {
 		var text = document.getElementById('hat_editor');
-		console.log(text.value);
 		hat_seq = text.value.split(',');
 	}
 
+	function updateSnares() {
+		var text = document.getElementById('snare_editor');
+		snare_seq = text.value.split(',');
+	}
 </script>
 
 </html>
