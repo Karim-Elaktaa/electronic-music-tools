@@ -25,6 +25,18 @@
 <script>
 	var audio_context = window.AudioContext || window.webkitAudioContext;
 	var con = new audio_context();
+	var osc = con.createOscillator();
+	var osc_amp = con.createGain();
+	osc_amp.gain.value = 0.6;
+	osc.connect(osc_amp);
+
+	con.type = "triangle";
+
+	osc_amp.connect(con.destination);
+	osc.start();
+
+	var freq = 200;
+	osc.frequency.value = freq;
 
 	var hat;
 	var snare;
@@ -86,6 +98,7 @@
 			}
 
 			now += interval;
+			changeNote(now);
 		}
 		got_up_to = now;
 	}, wait_time * 1000);
@@ -98,6 +111,15 @@
 	function updateSnares() {
 		var text = document.getElementById('snare_editor');
 		snare_seq = text.value.split(',');
+	}
+
+	function changeNote(when) {
+		freq = freq * 1.5;
+		if (freq > 2000) {
+			freq = freq * 0.1;
+		}
+		osc.frequency.value = freq;
+		osc.frequency.setValueAtTime(freq, when);
 	}
 </script>
 
