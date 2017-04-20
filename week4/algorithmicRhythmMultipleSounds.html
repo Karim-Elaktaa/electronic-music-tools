@@ -26,7 +26,7 @@
 	var snare;
 
 	var hat_seq = [0.25, 1, 0.5, 1];
-	var snare_seq = [0, 0, 1, 0];
+	var snare_seq = [0, 0.25, 0.7, 0.5];
 	var step = 0;
 	var interval = 0.125;
 
@@ -77,7 +77,7 @@
 				playSound(hat, now);
 			}
 
-			if (snare_seq[step % snare_seq.length]) {
+			if (snare_seq[step % snare_seq.length] > Math.random()) {
 				playSound(snare, now);
 			}
 
