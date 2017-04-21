@@ -25,10 +25,17 @@
 <script>
 	var audio_context = window.AudioContext || window.webkitAudioContext;
 	var con = new audio_context();
+
+	var comp = con.createDynamicsCompressor();
+	var drum_gain = con.createGain();;
+	drum_gain.gain.value = 50;
+	drum_gain.connect(comp);
+	comp.connect(con.destination);
+
 	var osc = con.createOscillator();
 	osc.type = "triangle"; // main osc type
 	var osc_amp = con.createGain();
-	osc_amp.gain.value = 0.2; // set gain value
+	osc_amp.gain.value = 0.5; // set gain value
 	var del = con.createDelay();
 	del.delayTime.value = 0.5; // delay value
 	var fb = con.createGain();
@@ -83,8 +90,9 @@
 		var player = con.createBufferSource();
 		player.buffer = buffer;
 		player.loop = false;
-		player.connect(con.destination);
+		//player.connect(con.destination);
 		player.start(time);
+		player.connect(drum_gain);
 	}
 
 	var wait_time = 0.5;
