@@ -12,23 +12,25 @@
 <body>
 	<div id="main">
 
-	<div
-		style = "background:black; height:500px; width:500px">
-		<textarea
-			id="hat_editor"
-			onkeyup="updateHats()">
-		</textarea>
-		<textarea
-			id="snare_editor"
-			onkeyup="updateSnares()">
-		</textarea>
-	</div>
-
-
 		<div style="width:840px; height:220px; display:block;">
 			<canvas class="visuAnalyser" 
 					width="840" height="220px">
 			</canvas>
+		</div>
+
+		<div id="osc1" class="oscFrame">
+			<div>
+				<textarea
+					id="hat_editor"
+					onkeyup="updateHats()">
+				</textarea>
+			</div>
+			<div>
+				<textarea
+					id="snare_editor"
+					onkeyup="updateSnares()">
+				</textarea>
+			</div>
 		</div>
 
 		<div id="osc1" class="oscFrame">
