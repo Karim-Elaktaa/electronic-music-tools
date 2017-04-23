@@ -3,12 +3,15 @@
 
 <html lang="en">
 	<head>
+		<script src="../ext/nexusUI.js"></script>
 		<meta http-equiv="content-type" context="text/html"; charset="utf-8">
 		<title>Electronic Music Tools</title>
 	</head>
 
 
 <body>
+	<div id="main">
+
 	<div
 		style = "background:black; height:500px; width:500px">
 		<textarea
@@ -20,9 +23,99 @@
 			onkeyup="updateSnares()">
 		</textarea>
 	</div>
+
+
+		<div style="width:840px; height:220px; display:block;">
+			<canvas class="visuAnalyser" 
+					width="840" height="220px">
+			</canvas>
+		</div>
+
+		<div id="osc1" class="oscFrame">
+			<div class="pair">
+				<canvas id="toggleStartOsc1" nx="toggle" class="lower-control"
+						height="65px" width="65px">
+				</canvas>
+				<div>On</div>
+			</div>
+		
+			<div class="pair">
+				<canvas id="selectTypeOsc1" nx="select" width="300px"
+						choices="sine,square,sawtooth,triangle" ></canvas>
+				<div>Oscillator type</div>
+			</div>
+		
+			<div id="firstOscManager">
+				<canvas id="sliderOsc1" nx="slider"
+						min="100" max="1000"></canvas>
+			
+				<canvas id="keyboardOsc1" nx="keyboard"
+						height="100px" width="500px"></canvas>
+			</div>
+		</div>
+
+		<div id="osc2" class="oscFrame">
+			<div class="pair">
+				<canvas id="toggleStartOsc2" nx="toggle" class="lower-control"
+						height="65px" width="65px">
+				</canvas>
+				<div>On</div>
+			</div>
+		
+			<div class="pair">
+				<canvas id="gainOsc2" nx="dial" class="lower-control"
+						></canvas>
+				<div>Gain</div>
+			</div>
+	
+			<div class="pair">
+				<canvas id="delayUIOsc2" nx="dial" class="lower-control"
+						></canvas>
+				<div>Delay</div>
+			</div>
+
+			<div class="pair">
+				<canvas id="filterUIOsc2" nx="dial" class="lower-control"
+						></canvas>
+				<div>BiquadFilter</div>
+			</div>
+
+			<div class="pair">
+				<canvas id="distortionUIOsc2" nx="dial" class="lower-control"
+						></canvas>
+				<div>Distortion</div>
+			</div>
+
+			<div>
+				<canvas id="sliderOsc2" nx="slider"
+						min="100" max="1000"></canvas>
+				<canvas id="positionOsc2" nx="position"></canvas>
+			</div>
+		</div>
+
+	</div>
 </body>
+<script>
+/////////////////////////////////////
+/////////////////////////////////////
+// User Interface
+/////////////////////////////////////
+/////////////////////////////////////
+
+	nx.onload = function() {
+		nx.colorize("accent", "#347");
+        nx.colorize("border", "#bbb");
+        nx.colorize("fill", "#eee");
+	};
+</script>
 
 <script>
+/////////////////////////////////////
+/////////////////////////////////////
+// Audio Management
+/////////////////////////////////////
+/////////////////////////////////////
+
 	var audio_context = window.AudioContext || window.webkitAudioContext;
 	var con = new audio_context();
 
@@ -141,5 +234,39 @@
 		osc.frequency.setValueAtTime(freq, when);
 	}
 </script>
+
+<style>
+	body {
+		margin:0;
+		padding:0;
+	}
+	#main {
+		width: 800px;
+		margin:30px auto;
+	}
+	.lower-control {
+		height:65px;
+		width:65px;
+		display:block;
+	}
+	.pair {
+		display:inline-block;
+		margin:10px 5px;
+	}
+	.pair div {
+		text-align:center;
+		font-family:helvetica;
+		font-size:9pt;
+		font-weight:500;
+		color:#aaa;
+		margin:10px 0px;
+	}
+	.oscFrame {
+		border: 3px #ededed solid;
+		padding:10px 10px;
+		margin:2px 5px;
+		border-radius: 25px;
+	}
+</style>
 
 </html>
