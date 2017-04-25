@@ -19,79 +19,20 @@
 		</div>
 
 		<div id="osc1" class="oscFrame">
-			<div>
+			<div class="pair">
 				<textarea
 					id="hat_editor"
 					onkeyup="updateHats()">
 				</textarea>
+				<div>Hat</div>
 			</div>
-			<div>
+
+			<div class="pair">
 				<textarea
 					id="snare_editor"
 					onkeyup="updateSnares()">
 				</textarea>
-			</div>
-		</div>
-
-		<div id="osc1" class="oscFrame">
-			<div class="pair">
-				<canvas id="toggleStartOsc1" nx="toggle" class="lower-control"
-						height="65px" width="65px">
-				</canvas>
-				<div>On</div>
-			</div>
-		
-			<div class="pair">
-				<canvas id="selectTypeOsc1" nx="select" width="300px"
-						choices="sine,square,sawtooth,triangle" ></canvas>
-				<div>Oscillator type</div>
-			</div>
-		
-			<div id="firstOscManager">
-				<canvas id="sliderOsc1" nx="slider"
-						min="100" max="1000"></canvas>
-			
-				<canvas id="keyboardOsc1" nx="keyboard"
-						height="100px" width="500px"></canvas>
-			</div>
-		</div>
-
-		<div id="osc2" class="oscFrame">
-			<div class="pair">
-				<canvas id="toggleStartOsc2" nx="toggle" class="lower-control"
-						height="65px" width="65px">
-				</canvas>
-				<div>On</div>
-			</div>
-		
-			<div class="pair">
-				<canvas id="gainOsc2" nx="dial" class="lower-control"
-						></canvas>
-				<div>Gain</div>
-			</div>
-	
-			<div class="pair">
-				<canvas id="delayUIOsc2" nx="dial" class="lower-control"
-						></canvas>
-				<div>Delay</div>
-			</div>
-
-			<div class="pair">
-				<canvas id="filterUIOsc2" nx="dial" class="lower-control"
-						></canvas>
-				<div>BiquadFilter</div>
-			</div>
-
-			<div class="pair">
-				<canvas id="distortionUIOsc2" nx="dial" class="lower-control"
-						></canvas>
-				<div>Distortion</div>
-			</div>
-
-			<div>
-				<canvas id="sliderOsc2" nx="slider"
-						min="100" max="1000"></canvas>
-				<canvas id="positionOsc2" nx="position"></canvas>
+				<div>Snare</div>
 			</div>
 		</div>
 
