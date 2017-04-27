@@ -153,7 +153,9 @@
 			}
 
 			now += interval;
-			changeNote(now);
+			if (Math.random() > 0.2) {
+				changeNote(now);
+			}
 		}
 		got_up_to = now;
 	}, wait_time * 1000);
