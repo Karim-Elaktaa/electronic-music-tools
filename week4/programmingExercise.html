@@ -63,7 +63,7 @@
 	var con = new audio_context();
 
 	var comp = con.createDynamicsCompressor();
-	var drum_gain = con.createGain();;
+	var drum_gain = con.createGain();
 	drum_gain.gain.value = 50;
 	drum_gain.connect(comp);
 	comp.connect(con.destination);
@@ -192,7 +192,7 @@
 	function getFreqMultiplier() {
 		iter++;
 		if (iter % 10) {
-			freqMultiplier += 0.1
+			freqMultiplier += 0.1;
 		}
 		if (freqMultiplier > 0.7) {
 			freqMultiplier = 0.1;
