@@ -94,8 +94,8 @@
 	var hat;
 	var snare;
 
-	var hat_seq = [0.5, 0, 1, 0.3];
-	var snare_seq = [0, 0.8, 0, 0.2];
+	var hat_seq = [];
+	var snare_seq = [];
 
 	var step = 0;
 	var interval = 0.125;
@@ -170,11 +170,20 @@
 
 	function changeNote(when) {
 		freq = freq * 1.5;
-		if (freq > 2000) {
+		if (freq > getRandomTargetFreq()) {
 			freq = freq * 0.1;
 		}
 		osc.frequency.value = freq;
 		osc.frequency.setValueAtTime(freq, when);
+	}
+
+	var iter = 0;
+	var targetIter = 10;
+	var coef = 9000;
+	function getRandomTargetFreq() {
+		var r = Math.random();
+		var res = coef * r;
+		return res;
 	}
 </script>
 
