@@ -171,19 +171,31 @@
 	function changeNote(when) {
 		freq = freq * 1.5;
 		if (freq > getRandomTargetFreq()) {
-			freq = freq * 0.1;
+			var freqMultiplier = getFreqMultiplier();
+			freq = freq * freqMultiplier;
 		}
 		osc.frequency.value = freq;
 		osc.frequency.setValueAtTime(freq, when);
 	}
 
-	var iter = 0;
-	var targetIter = 10;
-	var coef = 9000;
+	var coef = 7000;
 	function getRandomTargetFreq() {
 		var r = Math.random();
 		var res = coef * r;
 		return res;
+	}
+
+	var iter = 0;
+	var freqMultiplier = 0.1;
+	function getFreqMultiplier() {
+		iter++;
+		if (iter % 10) {
+			freqMultiplier += 0.1
+		}	
+		if (freqMultiplier > 0.5) {
+			freqMultiplier = 0.1;
+		}
+		return freqMultiplier;
 	}
 </script>
 
