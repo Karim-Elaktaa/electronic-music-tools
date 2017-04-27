@@ -13,7 +13,7 @@
 	<div id="main">
 
 		<div style="width:840px; height:220px; display:block;">
-			<canvas class="visuAnalyser" 
+			<canvas class="visuAnalyser"
 					width="840" height="220px">
 			</canvas>
 		</div>
@@ -178,7 +178,7 @@
 		osc.frequency.setValueAtTime(freq, when);
 	}
 
-	var coef = 7000;
+	var coef = 5000;
 	function getRandomTargetFreq() {
 		var r = Math.random();
 		var res = coef * r;
@@ -191,8 +191,8 @@
 		iter++;
 		if (iter % 10) {
 			freqMultiplier += 0.1
-		}	
-		if (freqMultiplier > 0.5) {
+		}
+		if (freqMultiplier > 0.7) {
 			freqMultiplier = 0.1;
 		}
 		return freqMultiplier;
